@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -28,5 +29,19 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
+
+	for {
+		messageType, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("read failed:", err)
+			break
+		}
+
+		err = conn.WriteMessage(messageType, message)
+		if err != nil {
+			log.Println("write failed:", err)
+			break
+		}
+	}
 
 }
