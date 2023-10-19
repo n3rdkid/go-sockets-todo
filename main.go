@@ -14,7 +14,7 @@ var socketUpgrade = websocket.Upgrader{
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "We did it..... 🎉 ")
+		http.ServeFile(w, r, "index.html")
 	})
 	http.HandleFunc("/ws", handleWebSocket)
 	fmt.Println("Server has started 🏃")
