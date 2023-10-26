@@ -31,13 +31,23 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 
 	for {
-		messageType, message, err := conn.ReadMessage()
+		messageType, p, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("read failed:", err)
 			break
 		}
+		switch messageType {
+		case websocket.TextMessage:
+			log.Println("TextMessage:", string(p))
 
-		err = conn.WriteMessage(messageType, message)
+		case websocket.BinaryMessage:
+			log.Println("BinaryMessage:", p)
+
+		case websocket.CloseMessage:
+			log.Println("CloseMessage:", messageType)
+		}
+
+		err = conn.WriteMessage(messageType, p)
 		if err != nil {
 			log.Println("write failed:", err)
 			break
