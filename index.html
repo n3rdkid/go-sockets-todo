@@ -29,23 +29,26 @@
       <script>
         var output = document.getElementById("output");
         var socket = new WebSocket("ws://localhost:8080/ws");
-    
-        socket.onopen = function () {
+        var userId = window.location.pathname.split("/")[1]
+
+        if(userId.length<1){
+          output.innerHTML = "C'mon now don't be shy, tell us your identifier...";
+        }else{
+          socket.onopen = function () {
           output.innerHTML = "Status: ONLINE\n";
-          socket.send("ONLINE")
+          socket.send(`${userId} ONLINE`);
         };
         function handleBlur(){
           output.innerHTML = "Status: OFFLINE\n";
-          socket.send("OFFLINE")
+          socket.send(`${userId} OFFLINE`);
         }
         function handleFocus(){
-          output.innerHTML = "Status: ONLINE\n";
-          socket.send("ONLINE")
+          output.innerHTML = "Status: ONLINEx\n";
+          socket.send(`${userId} ONLINE`);
         }
-
-
         window.addEventListener('blur', handleBlur);
         window.addEventListener('focus', handleFocus);
+        }
       </script>
 </body>
 </html>
