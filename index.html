@@ -1,54 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do</title>
-    <style>
-        html {
-          text-align: center;
-          font-size: 1rem;
-        }
-        div {
-          padding: 1rem;
-        }
-        #input {
-          font-size: 1rem;
-        }
-        p {
-            font-size: 1rem;
-        }
-      </style>
-</head>
-<body>
-    <div>
-        <h1>User Status</h1>
-        <pre id="output"></pre>
-      </div>
-    
-      <script>
-        var output = document.getElementById("output");
-        var socket = new WebSocket("ws://localhost:8080/ws");
-        var userId = window.location.pathname.split("/")[1]
 
-        if(userId.length<1){
-          output.innerHTML = "C'mon now don't be shy, tell us your identifier...";
-        }else{
-          socket.onopen = function () {
-          output.innerHTML = "Status: ONLINE\n";
-          socket.send(`${userId} ONLINE`);
-        };
-        function handleBlur(){
-          output.innerHTML = "Status: OFFLINE\n";
-          socket.send(`${userId} OFFLINE`);
-        }
-        function handleFocus(){
-          output.innerHTML = "Status: ONLINE\n";
-          socket.send(`${userId} ONLINE`);
-        }
-        window.addEventListener('blur', handleBlur);
-        window.addEventListener('focus', handleFocus);
-        }
-      </script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do</title>
+  <style>
+    html {
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    div {
+      padding: 1rem;
+    }
+
+    #input {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1>User Status</h1>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    var output = document.getElementById("output");
+    var socket = new WebSocket("ws://localhost:8080/ws");
+    var userId = window.location.pathname.split("/")[1]
+    function sendStatusMessage(message) {
+      switch (socket.readyState) {
+        case socket.OPEN:
+          socket.send(`${userId} ${message}`);
+          break;
+        case socket.CONNECTING:
+          console.log("Socket CONNECTING")
+        case socket.CLOSING:
+          console.log("Socket Closing")
+        case socket.CLOSED:
+          console.log("Socket Closed")
+
+      }
+    }
+    if (userId.length < 1) {
+      output.innerHTML = "C'mon now don't be shy, tell us your identifier...";
+    } else {
+      socket.onopen = function () {
+        output.innerHTML = "Status: ONLINE\n";
+        sendStatusMessage("ONLINE");
+      };
+      function handleBlur() {
+        console.log(socket.readyState);
+        output.innerHTML = "Status: OFFLINE\n";
+        sendStatusMessage("OFFLINE");
+      }
+      function handleFocus() {
+        console.log(socket.readyState);
+        output.innerHTML = "Status: ONLINE\n";
+        sendStatusMessage("ONLINE");
+
+      }
+      window.addEventListener('blur', handleBlur);
+      window.addEventListener('focus', handleFocus);
+    }
+
+
+  </script>
 </body>
+
 </html>
