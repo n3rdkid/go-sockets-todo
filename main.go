@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -14,32 +13,6 @@ var socketUpgrade = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-var todoList []string
-
-func getCmd(input string) string {
-	inputArr := strings.Split(input, " ")
-	return inputArr[0]
-}
-
-func getMessage(input string) string {
-	inputArr := strings.Split(input, " ")
-	var result string
-	for i := 1; i < len(inputArr); i++ {
-		result += inputArr[i]
-	}
-	return result
-}
-
-func updateTodoList(input string) {
-	tmpList := todoList
-	todoList = []string{}
-	for _, val := range tmpList {
-		if val == input {
-			continue
-		}
-		todoList = append(todoList, val)
-	}
-}
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "index.html")
