@@ -43,7 +43,7 @@
           socket.send(`${userId} OFFLINE`);
         }
         function handleFocus(){
-          output.innerHTML = "Status: ONLINEx\n";
+          output.innerHTML = "Status: ONLINE\n";
           socket.send(`${userId} ONLINE`);
         }
         window.addEventListener('blur', handleBlur);
